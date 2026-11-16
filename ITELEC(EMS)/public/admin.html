@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<!-- Lets administrators manage accounts and retrieve automatic attendance exports. -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Panel - Employee Management System</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body data-page="admin">
+  <nav aria-label="Main navigation">
+    <h1>EMS</h1>
+    <p>Employee Management System</p>
+    <ul>
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li data-roles="admin hr"><a href="employees.html">Employees</a></li>
+      <li data-roles="admin hr"><a href="attendance.html">Attendance</a></li>
+      <li data-roles="admin hr employee"><a href="payroll.html">Payroll</a></li>
+      <li data-roles="admin hr"><a href="admin.html" aria-current="page">Admin Panel</a></li>
+      <li><a href="login.html" data-logout>Log out</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <header class="page-header">
+      <div>
+        <p>System administration</p>
+        <h2>Admin Panel</h2>
+      </div>
+      <p>Logged in as: <strong data-current-user></strong></p>
+    </header>
+
+    <section class="summary" aria-label="Account summary">
+      <article>
+        <h3>Total accounts</h3>
+        <p class="summary-value" id="account-total">—</p>
+      </article>
+      <article>
+        <h3>Super Administrator</h3>
+        <p class="summary-value" id="super-admin-total">—</p>
+      </article>
+      <article>
+        <h3>HR Personnel</h3>
+        <p class="summary-value" id="hr-total">—</p>
+      </article>
+    </section>
+
+    <section class="panel" aria-labelledby="monthly-attendance-exports-heading">
+      <div class="section-heading">
+        <div>
+          <h2 id="monthly-attendance-exports-heading">Monthly attendance exports</h2>
+          <p>EMS saves the previous month's Excel file after midnight on the first day of each month, using Manila time.</p>
+        </div>
+      </div>
+      <p class="form-note">The EMS server must be running at month-end. If it is offline, the file is generated when the server starts again.</p>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Month</th>
+              <th scope="col">File</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody id="monthly-attendance-export-rows">
+            <tr><td colspan="3">Loading monthly exports…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="employees-without-accounts-heading">
+      <div class="section-heading">
+        <div>
+          <h2 id="employees-without-accounts-heading">Employees without an account</h2>
+          <p>Employee names are matched to usernames. An account must also have a recognized role and a valid password hash.</p>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">EmployeeID</th>
+              <th scope="col">Name</th>
+              <th scope="col">Email</th>
+              <th scope="col">Suggested username</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody id="employees-without-accounts-rows">
+            <tr><td colspan="5">Loading employees…</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="form-note">The username is generated from the employee name and ID. It is saved on the employee only after an Employee account with a role and password is created.</p>
+    </section>
+
+    <section class="panel" aria-labelledby="user-accounts-heading">
+      <div class="section-heading">
+        <div>
+          <h2 id="user-accounts-heading">User accounts</h2>
+          <p>Users store login credentials and account roles.</p>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">UserID</th>
+              <th scope="col">Username</th>
+              <th scope="col">Account Role</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody id="user-account-rows">
+            <tr><td colspan="4">Loading user accounts…</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="message" data-message role="status" aria-live="polite"></p>
+      <p class="form-note">Password hashes are never displayed. You cannot delete the account currently signed in.</p>
+    </section>
+
+    <section class="panel" aria-labelledby="add-account-heading" data-roles="admin hr">
+      <div class="section-heading">
+        <div>
+          <h2 id="add-account-heading">Add account</h2>
+          <p>Create a login account and assign an administrator role.</p>
+        </div>
+      </div>
+
+      <form id="account-form">
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="account-username">Username</label>
+            <input id="account-username" name="username" type="text" maxlength="100" autocomplete="off" required>
+          </div>
+          <div class="form-field">
+            <label for="account-password">Password</label>
+            <input id="account-password" name="password" type="password" minlength="8" maxlength="255" autocomplete="new-password" required>
+          </div>
+          <div class="form-field">
+            <label for="account-role">Account role</label>
+            <select id="account-role" name="accountRole" required>
+              <option value="HR Personnel">HR Personnel</option>
+              <option value="Super Administrator">Super Administrator</option>
+            </select>
+          </div>
+        </div>
+        <input id="account-employee-id" name="employeeId" type="hidden">
+        <div class="form-actions">
+          <button type="submit">Add account</button>
+          <button type="button" id="account-cancel">Cancel</button>
+        </div>
+      </form>
+      <p class="message" data-message role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="panel" aria-labelledby="access-roles-heading">
+      <div class="section-heading">
+        <div>
+          <h2 id="access-roles-heading">Access roles</h2>
+          <p>Use roles to guide access to employee management features.</p>
+        </div>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Role</th>
+              <th scope="col">Intended access</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Super Administrator</td>
+              <td>Has the same management access as HR Personnel, including user account creation, employee records, attendance, and payroll.</td>
+            </tr>
+            <tr>
+              <td>Administrator / HR Personnel</td>
+              <td>Has the same management access as Super Administrator, including user account creation, employee records, attendance, and payroll.</td>
+            </tr>
+            <tr>
+              <td>Employee</td>
+              <td>Views the employee directory, their own attendance and payroll, and can update their own username or password. Cannot make management edits or change their role.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

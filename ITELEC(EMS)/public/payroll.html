@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<!-- Displays monthly salary calculations for managers or the signed-in employee. -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Payroll - Employee Management System</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body data-page="payroll">
+  <nav aria-label="Main navigation">
+    <h1>EMS</h1>
+    <p>Employee Management System</p>
+    <ul>
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="employees.html">Employees</a></li>
+      <li><a href="attendance.html">Attendance</a></li>
+      <li><a href="payroll.html" aria-current="page">Payroll</a></li>
+      <li data-roles="admin hr"><a href="admin.html">Admin Panel</a></li>
+      <li data-roles="employee"><a href="settings.html">Settings</a></li>
+      <li><a href="login.html" data-logout>Log out</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <header class="page-header">
+      <div>
+        <p>Compensation</p>
+        <h2>Payroll</h2>
+      </div>
+      <p>Monthly salary: ₱25,000 base, plus ₱200 per overtime hour, less ₱300 per late hour, prorated by the minute. Weekend lateness is not deducted.</p>
+    </header>
+
+    <section class="summary" aria-label="Payroll summary">
+      <article>
+        <h3>Salary records</h3>
+        <p class="summary-value" id="salary-count">—</p>
+      </article>
+      <article>
+        <h3>Overtime pay total</h3>
+        <p class="summary-value" id="overtime-pay-total">—</p>
+      </article>
+      <article>
+        <h3>Absence deductions</h3>
+        <p class="summary-value" id="absence-deduction-total">—</p>
+      </article>
+      <article>
+        <h3>Deductions total</h3>
+        <p class="summary-value" id="deductions-total">—</p>
+      </article>
+      <article>
+        <h3>Net salary total</h3>
+        <p class="summary-value" id="net-salary-total">—</p>
+      </article>
+    </section>
+
+    <section class="panel" aria-labelledby="payroll-records-heading">
+      <div class="section-heading">
+        <div>
+          <h2 id="payroll-records-heading">Salary records</h2>
+          <p id="payroll-month-label">Salary information for the selected month.</p>
+        </div>
+      </div>
+      <form class="search-form" id="payroll-filter-form">
+        <div class="form-field">
+          <label for="payroll-month">Payroll month</label>
+          <input type="month" id="payroll-month" name="month" required>
+        </div>
+        <button type="submit">Show payroll</button>
+      </form>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">SalaryID</th>
+              <th scope="col">EmployeeID</th>
+              <th scope="col">BasicSalary</th>
+              <th scope="col">Working Hours</th>
+              <th scope="col">Overtime Hours</th>
+              <th scope="col">OvertimePay</th>
+              <th scope="col">AbsentDays</th>
+              <th scope="col">AbsenceDeduction</th>
+              <th scope="col">LateDeduction</th>
+              <th scope="col">Deductions</th>
+              <th scope="col">NetSalary</th>
+            </tr>
+          </thead>
+          <tbody id="payroll-rows">
+            <tr>
+              <td colspan="11">Loading salary records...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="form-note">Working hours, overtime, overtime pay, and deductions are recalculated from each attendance date and its time-in/time-out. Net salary = ₱25,000 basic salary + overtime pay − late deductions − absence deductions. Each missed weekday, including a zero-time absence record, is 8 hours × ₱300 = ₱2,400. Weekends are not deducted; current-month absences are counted through today.</p>
+      <p class="message" data-message role="status" aria-live="polite"></p>
+    </section>
+  </main>
+</body>
+</html>

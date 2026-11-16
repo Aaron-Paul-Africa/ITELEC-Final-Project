@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<!-- Authenticates users before they can open the EMS feature pages. -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in - Employee Management System</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body class="login-page" data-page="login">
+  <main class="login-main">
+    <section class="panel login-panel" aria-labelledby="login-heading">
+      <header class="login-header">
+        <h1>AMS</h1>
+        <p>Aaron Management System</p>
+      </header>
+      <h2 id="login-heading">Sign in</h2>
+      <p>Enter your account details to continue.</p>
+      <form id="login-form">
+        <div class="form-field">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" autocomplete="username" required>
+        </div>
+        <div class="form-field">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" autocomplete="current-password" required>
+        </div>
+        <div class="form-actions">
+          <button type="submit">Sign in</button>
+        </div>
+      </form>
+      <p id="login-error" class="form-note" role="alert" hidden></p>
+      <p class="form-note">Sign in with the username and password assigned to your account.</p>
+    </section>
+  </main>
+</body>
+</html>

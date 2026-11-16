@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<!-- Filters attendance and provides manager-only entry and monthly export controls. -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Attendance - Employee Management System</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body data-page="attendance">
+  <nav aria-label="Main navigation">
+    <h1>EMS</h1>
+    <p>Employee Management System</p>
+    <ul>
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="employees.html">Employees</a></li>
+      <li><a href="attendance.html" aria-current="page">Attendance</a></li>
+      <li data-roles="admin hr employee"><a href="payroll.html">Payroll</a></li>
+      <li data-roles="admin hr"><a href="admin.html">Admin Panel</a></li>
+      <li data-roles="employee"><a href="settings.html">Settings</a></li>
+      <li><a href="login.html" data-logout>Log out</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <header class="page-header">
+      <div>
+        <p>Time &amp; attendance</p>
+        <h2>Attendance</h2>
+      </div>
+      <p>Logged in as: <strong data-current-user></strong></p>
+    </header>
+
+    <section class="summary" aria-label="Attendance summary">
+      <article>
+        <h3>Employees scheduled</h3>
+        <p class="summary-value" id="attendance-scheduled">—</p>
+      </article>
+      <article>
+        <h3>Present</h3>
+        <p class="summary-value" id="attendance-present">—</p>
+      </article>
+      <article>
+        <h3>Absent</h3>
+        <p class="summary-value" id="attendance-absent">—</p>
+      </article>
+      <article>
+        <h3>Late arrivals</h3>
+        <p class="summary-value" id="attendance-late">—</p>
+      </article>
+    </section>
+
+    <section class="panel" aria-labelledby="attendance-records-heading">
+      <div class="section-heading">
+        <div>
+          <h2 id="attendance-records-heading">Attendance records</h2>
+          <p>Review employee time in, time out, and daily hours.</p>
+        </div>
+      </div>
+
+      <div class="attendance-controls">
+        <form class="search-form" id="attendance-filter-form">
+          <div class="form-field">
+            <label for="attendance-filter-date">Date</label>
+            <input type="date" id="attendance-filter-date" name="date">
+          </div>
+          <button type="submit">Filter</button>
+        </form>
+
+        <form class="search-form" id="attendance-export-form" data-roles="admin hr">
+          <div class="form-field">
+            <label for="attendance-export-month">Export month</label>
+            <input type="month" id="attendance-export-month" name="month" required>
+          </div>
+          <button type="submit">Save Monthly Excel</button>
+          <label class="monthly-export-toggle" for="automatic-monthly-export">
+            <input id="automatic-monthly-export" type="checkbox" role="switch" aria-describedby="automatic-monthly-export-state">
+            <span class="monthly-export-toggle-track" aria-hidden="true"></span>
+            <span id="automatic-monthly-export-state" aria-live="polite">Auto-save monthly: No</span>
+          </label>
+        </form>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">AttendanceID</th>
+              <th scope="col">EmployeeID</th>
+              <th scope="col">Date</th>
+              <th scope="col">Status</th>
+              <th scope="col">Time In</th>
+              <th scope="col">Time Out</th>
+              <th scope="col">Overtime</th>
+              <th scope="col">Total Working Hours</th>
+              <th scope="col" data-manager-only>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="attendance-rows">
+            <tr>
+              <td colspan="9">Loading attendance records...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="message" data-message role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="panel" aria-labelledby="attendance-form-heading" data-management>
+      <div class="section-heading">
+        <div>
+          <h2 id="attendance-form-heading">Add attendance record</h2>
+          <p>Enter any same-day time. If this employee already has a record for the selected date, the latest times will update it; otherwise, a new record will be added. Late deductions (₱300/hour) and overtime pay (₱200/hour) are prorated by the minutes worked; the 12:00–1:00 PM break is excluded from work hours.</p>
+        </div>
+      </div>
+      <form id="attendance-form">
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="attendance-employee">Employee</label>
+            <select id="attendance-employee" name="EmployeeID" required>
+              <option value="">Select employee</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="attendance-date">Date</label>
+            <input type="date" id="attendance-date" name="Date" required>
+          </div>
+          <div class="form-field">
+            <label for="attendance-time-in">Time in</label>
+            <input type="time" id="attendance-time-in" name="TimeIn" step="60" required>
+          </div>
+          <div class="form-field">
+            <label for="attendance-time-out">Time out</label>
+            <input type="time" id="attendance-time-out" name="TimeOut" step="60" required>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="submit">Save attendance</button>
+          <button type="reset" id="attendance-reset">Clear form</button>
+        </div>
+      </form>
+      <p class="message" data-message role="status" aria-live="polite"></p>
+    </section>
+  </main>
+</body>
+</html>

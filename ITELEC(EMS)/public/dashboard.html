@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<!-- Shows role-aware attendance totals and the selected user's daily records. -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard - Employee Management System</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body data-page="dashboard">
+  <nav aria-label="Main navigation">
+    <h1>EMS</h1>
+    <p>Employee Management Systems</p>
+    <ul>
+      <li><a href="dashboard.html" aria-current="page">Dashboard</a></li>
+      <li><a href="employees.html">Employees</a></li>
+      <li><a href="attendance.html">Attendance</a></li>
+      <li data-roles="admin hr employee"><a href="payroll.html">Payroll</a></li>
+      <li data-roles="admin hr"><a href="admin.html">Admin Panel</a></li>
+      <li data-roles="employee"><a href="settings.html">Settings</a></li>
+      <li><a href="login.html" data-logout>Log out</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <header class="page-header">
+      <div>
+        <p>Overview</p>
+        <h2>Dashboard</h2>
+      </div>
+      <p>Logged in as: <strong data-current-user></strong></p>
+    </header>
+
+    <section class="summary" aria-label="HR summary">
+      <article>
+        <h3>Total employees</h3>
+        <p class="summary-value" id="dashboard-employee-count">—</p>
+      </article>
+      <article>
+        <h3>Present today</h3>
+        <p class="summary-value" id="dashboard-present-count">—</p>
+      </article>
+      <article>
+        <h3>Absent today</h3>
+        <p class="summary-value" id="dashboard-absent-count">—</p>
+      </article>
+    </section>
+
+    <section class="panel" aria-labelledby="attendance-summary-heading">
+      <div class="section-heading">
+        <div>
+          <h2 id="attendance-summary-heading">Today's attendance</h2>
+          <p>Attendance records for the current work day.</p>
+        </div>
+        <a href="attendance.html">View attendance</a>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">AttendanceID</th>
+              <th scope="col">EmployeeID</th>
+              <th scope="col">Date</th>
+              <th scope="col">Status</th>
+              <th scope="col">TimeIn</th>
+              <th scope="col">TimeOut</th>
+              <th scope="col">Overtime</th>
+              <th scope="col">Total Working Hours</th>
+            </tr>
+          </thead>
+          <tbody id="dashboard-attendance-rows">
+            <tr><td colspan="8">Today's attendance records will appear here.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="message" data-message role="status" aria-live="polite"></p>
+    </section>
+
+    
+  </main>
+</body>
+</html>

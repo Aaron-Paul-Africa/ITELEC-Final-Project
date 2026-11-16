@@ -1,0 +1,258 @@
+{
+  "info": {
+    "name": "EMS API smoke tests",
+    "description": "API smoke checks. Sign in with an authorized manager account; Postman retains the session cookie for following requests. The payroll request recalculates and persists derived salary totals.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Sign in",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/api/login"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('sign in succeeds', function () { pm.response.to.have.status(200); });",
+              "pm.test('response identifies the account role', function () { pm.expect(pm.response.json()).to.have.property('role'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Current session",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/session"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('session is authenticated', function () { pm.response.to.have.status(200); });",
+              "pm.test('session returns a role', function () { pm.expect(pm.response.json()).to.have.property('role'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Dashboard",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/dashboard?date={{date}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('dashboard request succeeds', function () { pm.response.to.have.status(200); });",
+              "pm.test('dashboard includes attendance totals', function () { pm.expect(pm.response.json()).to.have.property('attendance'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Search employees",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/employees?search={{search}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('employee search succeeds', function () { pm.response.to.have.status(200); });",
+              "pm.test('employee search returns an array', function () { pm.expect(pm.response.json()).to.be.an('array'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Attendance",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/attendance?date={{date}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('attendance request succeeds', function () { pm.response.to.have.status(200); });",
+              "pm.test('attendance response is an array', function () { pm.expect(pm.response.json()).to.be.an('array'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Payroll",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/salaries?month={{month}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('payroll request succeeds', function () { pm.response.to.have.status(200); });",
+              "pm.test('payroll response includes the selected month and salaries', function () { var body = pm.response.json(); pm.expect(body.month).to.eql(pm.variables.get('month')); pm.expect(body.salaries).to.be.an('array'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. User accounts",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/users"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('user list is available to the manager', function () { pm.response.to.have.status(200); });",
+              "pm.test('user response is an array', function () { pm.expect(pm.response.json()).to.be.an('array'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Employees without accounts",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/employees/without-account"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('unlinked employee list is available to the manager', function () { pm.response.to.have.status(200); });",
+              "pm.test('unlinked employee response is an array', function () { pm.expect(pm.response.json()).to.be.an('array'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. Generated monthly exports",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/exports/attendance/monthly"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('monthly export list is available to the manager', function () { pm.response.to.have.status(200); });",
+              "pm.test('export response is an array', function () { pm.expect(pm.response.json()).to.be.an('array'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. Automatic export setting",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/settings/automatic-monthly-export"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('automatic export setting is available to the manager', function () { pm.response.to.have.status(200); });",
+              "pm.test('setting contains a boolean enabled value', function () { pm.expect(pm.response.json().enabled).to.be.a('boolean'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "11. Sign out",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/logout"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('sign out clears the session', function () { pm.response.to.have.status(204); });"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:3000"
+    },
+    {
+      "key": "username",
+      "value": ""
+    },
+    {
+      "key": "password",
+      "value": ""
+    },
+    {
+      "key": "date",
+      "value": "2026-11-13"
+    },
+    {
+      "key": "month",
+      "value": "2026-11"
+    },
+    {
+      "key": "search",
+      "value": ""
+    }
+  ]
+}

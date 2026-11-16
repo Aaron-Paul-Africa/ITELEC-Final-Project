@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<!-- Shows the employee directory and manager-only employee maintenance form. -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Employees - Employee Management System</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body data-page="employees">
+  <nav aria-label="Main navigation">
+    <h1>EMS</h1>
+    <p>Employee Management System</p>
+    <ul>
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="employees.html" aria-current="page">Employees</a></li>
+      <li><a href="attendance.html">Attendance</a></li>
+      <li data-roles="admin hr employee"><a href="payroll.html">Payroll</a></li>
+      <li data-roles="admin hr"><a href="admin.html">Admin Panel</a></li>
+      <li data-roles="employee"><a href="settings.html">Settings</a></li>
+      <li><a href="login.html" data-logout>Log out</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <header class="page-header">
+      <div>
+        <p>Human Resources</p>
+        <h2>Employees</h2>
+      </div>
+      <p>Logged in as: <strong data-current-user></strong></p>
+    </header>
+
+    <section class="summary" aria-label="Employee summary">
+      <article>
+        <h3>Total employees</h3>
+        <p class="summary-value" id="employee-total">—</p>
+      </article>
+      <article>
+        <h3>Recently added</h3>
+        <p class="summary-value" id="employee-recent">—</p>
+      </article>
+    </section>
+
+    <section class="panel" aria-labelledby="directory-heading">
+      <div class="section-heading">
+        <div>
+          <h2 id="directory-heading">Employee directory</h2>
+          <p>Add, search, edit, and delete employee records.</p>
+        </div>
+      </div>
+
+      <form class="search-form" role="search">
+        <div class="search-field">
+          <label for="employee-search">Search employees</label>
+          <input
+            type="search"
+            id="employee-search"
+            name="search"
+            placeholder="Search by name, ID, or position"
+          >
+        </div>
+        <button type="submit">Search</button>
+        <button type="button" data-export="employees" data-roles="admin hr">Save Excel</button>
+      </form>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">EmployeeID</th>
+              <th scope="col">Name</th>
+              <th scope="col">Gender</th>
+              <th scope="col">Birth Date</th>
+              <th scope="col">Contact Number</th>
+              <th scope="col">Email</th>
+              <th scope="col">Position</th>
+              <th scope="col">Address</th>
+              <th scope="col" data-manager-only>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="employee-rows">
+            <tr>
+              <td colspan="9">Loading employees...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="message" data-message role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="panel" aria-labelledby="employee-form-heading" data-management>
+      <div class="section-heading">
+        <div>
+          <h2 id="employee-form-heading">Add employee</h2>
+          <p>EmployeeID is assigned automatically when this record is saved.</p>
+        </div>
+      </div>
+
+      <form id="employee-form">
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="employee-name">Full name</label>
+            <input type="text" id="employee-name" name="Name" maxlength="100" autocomplete="name" required>
+          </div>
+          <div class="form-field">
+            <label for="employee-gender">Gender</label>
+            <select id="employee-gender" name="Gender" required>
+              <option value="">Select gender</option>
+              <option>Female</option>
+              <option>Male</option>
+              <option>Other</option>
+              <option>Prefer not to say</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="employee-birthdate">Birth date</label>
+            <input type="date" id="employee-birthdate" name="BirthDate" required>
+          </div>
+          <div class="form-field">
+            <label for="employee-contact">Contact number</label>
+            <input type="tel" id="employee-contact" name="ContactNumber" maxlength="25" autocomplete="tel" required>
+          </div>
+          <div class="form-field">
+            <label for="employee-email">Email address</label>
+            <input type="email" id="employee-email" name="Email" maxlength="255" autocomplete="email" required>
+          </div>
+          <div class="form-field">
+            <label for="employee-position">Position</label>
+            <select id="employee-position" name="Position" required>
+              <option value="">Select position</option>
+              <option>Employee</option>
+              <option>HR Personnel</option>
+            </select>
+          </div>
+          <div class="form-field form-field-wide">
+            <label for="employee-address">Address</label>
+            <textarea id="employee-address" name="Address" rows="3" maxlength="255" autocomplete="street-address" required></textarea>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="submit">Save employee</button>
+          <button type="reset" id="employee-reset">Clear form</button>
+        </div>
+      </form>
+      <p class="message" data-message role="status" aria-live="polite"></p>
+    </section>
+
+  </main>
+</body>
+</html>
